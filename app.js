@@ -111,15 +111,15 @@ function renderCats() {
         <div class="cat-name">${esc(c.material.icon)} ${esc(c.name)}</div>
         <div class="cat-meta">素材：${esc(c.material.name)}（所持 ${iv[c.id] || 0}）／ 覚えた ${done} / ${c.cards.length}</div>
         <div class="cat-btns">
-          <button class="btn small" data-cat="${esc(c.id)}" data-mode="flip">暗記カード</button>
           <button class="btn small sub2" data-cat="${esc(c.id)}" data-mode="choice">4択</button>
+          <button class="btn small" data-cat="${esc(c.id)}" data-mode="flip">暗記カード</button>
         </div>
       </div>`;
     }
     html += `<div class="cat-row"><div class="cat-name">📚 ${esc(s.name)} 全部ミックス</div>
       <div class="cat-btns">
-        <button class="btn small" data-subj="${esc(s.name)}" data-mode="flip">暗記カード</button>
         <button class="btn small sub2" data-subj="${esc(s.name)}" data-mode="choice">4択</button>
+        <button class="btn small" data-subj="${esc(s.name)}" data-mode="flip">暗記カード</button>
       </div></div>`;
     html += `</div>`;
   }
