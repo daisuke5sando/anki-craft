@@ -11,6 +11,7 @@ header {
   padding: 10px 14px; position: sticky; top: 0; z-index: 10;
 }
 .logo { color: #fff; font-size: 22px; letter-spacing: 1px; text-shadow: 2px 2px 0 #3c7027; }
+.logo-img { height: 44px; width: auto; display: block; }
 main { max-width: 640px; margin: 0 auto; padding: 14px 12px 40px; }
 .loading { color: #fff; text-align: center; margin-top: 40px; }
 
@@ -39,10 +40,11 @@ main { max-width: 640px; margin: 0 auto; padding: 14px 12px 40px; }
 .bar { background: #d8cfb2; border: 2px solid #26221c; border-radius: 4px; height: 16px; overflow: hidden; }
 .bar > div { background: #58a03c; height: 100%; transition: width .4s; }
 
-.cat-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 0; border-top: 2px dashed #c9bd97; }
+.cat-row { display: block; padding: 10px 0; border-top: 2px dashed #c9bd97; }
 .cat-row:first-of-type { border-top: none; }
-.cat-name { font-size: 17px; flex: 1 1 100%; }
-.cat-meta { font-size: 13px; color: #6b6252; flex: 1 1 auto; }
+.cat-name { font-size: 17px; }
+.cat-meta { font-size: 13px; color: #6b6252; margin-top: 2px; }
+.cat-btns { display: flex; gap: 8px; margin-top: 8px; }
 
 .cardbox {
   background: #fffdf4; border: 3px solid #26221c; border-radius: 8px;

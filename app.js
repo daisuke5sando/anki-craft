@@ -67,7 +67,7 @@ async function renderRanges() {
     try { rangeIndex = await fetchJSON("data/index.json"); }
     catch (e) { app.innerHTML = `<div class="panel">データが読み込めませんでした。</div>`; return; }
   }
-  let html = `<div class="panel"><h2>どの範囲を勉強する？</h2><p class="sub">正解すると素材が手に入る。素材を集めると、アイテムが作れるよ。</p></div>`;
+  let html = ``;
   for (const r of rangeIndex) {
     const m = masteredCount(r.id);
     const pct = r.totalCards ? Math.round(100 * m / r.totalCards) : 0;
@@ -76,7 +76,7 @@ async function renderRanges() {
       <p class="sub">${esc(r.subjects.join("・"))} ／ カード ${r.totalCards} 枚</p>
       <div class="bar"><div style="width:${pct}%"></div></div>
       <p class="sub">覚えたカード： ${m} / ${r.totalCards}（${pct}%）</p>
-      <button class="btn big" data-range="${esc(r.id)}">この範囲で遊ぶ</button>
+      <button class="btn big" data-range="${esc(r.id)}">PLAY</button>
     </div>`;
   }
   app.innerHTML = html;
@@ -110,13 +110,17 @@ function renderCats() {
       html += `<div class="cat-row">
         <div class="cat-name">${esc(c.material.icon)} ${esc(c.name)}</div>
         <div class="cat-meta">素材：${esc(c.material.name)}（所持 ${iv[c.id] || 0}）／ 覚えた ${done} / ${c.cards.length}</div>
-        <button class="btn small" data-cat="${esc(c.id)}" data-mode="flip">暗記カード</button>
-        <button class="btn small sub2" data-cat="${esc(c.id)}" data-mode="choice">4択</button>
+        <div class="cat-btns">
+          <button class="btn small" data-cat="${esc(c.id)}" data-mode="flip">暗記カード</button>
+          <button class="btn small sub2" data-cat="${esc(c.id)}" data-mode="choice">4択</button>
+        </div>
       </div>`;
     }
     html += `<div class="cat-row"><div class="cat-name">📚 ${esc(s.name)} 全部ミックス</div>
-      <button class="btn small" data-subj="${esc(s.name)}" data-mode="flip">暗記カード</button>
-      <button class="btn small sub2" data-subj="${esc(s.name)}" data-mode="choice">4択</button></div>`;
+      <div class="cat-btns">
+        <button class="btn small" data-subj="${esc(s.name)}" data-mode="flip">暗記カード</button>
+        <button class="btn small sub2" data-subj="${esc(s.name)}" data-mode="choice">4択</button>
+      </div></div>`;
     html += `</div>`;
   }
   html += `<div class="panel"><button class="btn ghost small" id="btn-reset">この範囲の記録をリセット</button></div>`;
