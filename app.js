@@ -110,12 +110,12 @@ function renderCats() {
       html += `<div class="cat-row">
         <div class="cat-name">${esc(c.material.icon)} ${esc(c.name)}</div>
         <div class="cat-meta">素材：${esc(c.material.name)}（所持 ${iv[c.id] || 0}）／ 覚えた ${done} / ${c.cards.length}</div>
-        <button class="btn small" data-cat="${esc(c.id)}" data-mode="flip">めくり</button>
+        <button class="btn small" data-cat="${esc(c.id)}" data-mode="flip">暗記カード</button>
         <button class="btn small sub2" data-cat="${esc(c.id)}" data-mode="choice">4択</button>
       </div>`;
     }
     html += `<div class="cat-row"><div class="cat-name">📚 ${esc(s.name)} 全部ミックス</div>
-      <button class="btn small" data-subj="${esc(s.name)}" data-mode="flip">めくり</button>
+      <button class="btn small" data-subj="${esc(s.name)}" data-mode="flip">暗記カード</button>
       <button class="btn small sub2" data-subj="${esc(s.name)}" data-mode="choice">4択</button></div>`;
     html += `</div>`;
   }
@@ -196,8 +196,10 @@ function renderPlay() {
         ${s.mode === "flip" ? `<div class="hint" id="card-hint">タップすると答えが見える</div>` : ""}
       </div>
       <div id="play-ui"></div>
-    </div>`;
+    </div>
+    <button class="btn ghost" id="p-back">もどる</button>`;
   app.innerHTML = html;
+  app.querySelector("#p-back").addEventListener("click", () => { session = null; renderCats(); });
   const ui = app.querySelector("#play-ui");
   if (s.mode === "flip") {
     app.querySelector("#cardbox").addEventListener("click", () => {
@@ -272,7 +274,7 @@ let finisher = null;
 function renderCraft() {
   const r = current, iv = inv(r.id);
   const crafted = store.crafted[r.id] || [];
-  let html = `<div class="panel"><h2>🔨 クラフト</h2><h3>持っている素材</h3><div class="inv-grid">`;
+  let html = `<div class="panel"><h2>🔨 クラフト</h2><button class="btn ghost small" id="c-back-top">もどる</button><h3>持っている素材</h3><div class="inv-grid">`;
   let any = false;
   for (const s of r.subjects) for (const c of s.categories) {
     const n = iv[c.id] || 0;
@@ -300,9 +302,10 @@ function renderCraft() {
         return rec ? `${esc(rec.icon)} ${esc(n)}` : esc(n);
       }).join("　")}</p>`
     : `<p class="sub">まだ何も作っていない。</p>`;
-  html += `<button class="btn ghost" id="c-back">カテゴリ選択へ</button></div>`;
+  html += `<button class="btn ghost" id="c-back">もどる</button></div>`;
   app.innerHTML = html;
   app.querySelector("#c-back").addEventListener("click", renderCats);
+  app.querySelector("#c-back-top").addEventListener("click", renderCats);
   app.querySelectorAll("[data-craft]").forEach(b => b.addEventListener("click", () =>
     startCraft((r.recipes || [])[Number(b.dataset.craft)])));
 }
@@ -333,7 +336,9 @@ function renderFinisher() {
         <div class="hint" id="card-hint">タップすると答えが見える</div>
       </div>
       <div id="play-ui"></div>
-    </div>`;
+    </div>
+    <button class="btn ghost" id="fin-back">もどる</button>`;
+  app.querySelector("#fin-back").addEventListener("click", () => { finisher = null; session = null; renderCraft(); });
   const ui = app.querySelector("#play-ui");
   app.querySelector("#cardbox").addEventListener("click", () => {
     app.querySelector("#card-a").style.display = "";
