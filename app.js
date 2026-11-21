@@ -43,7 +43,7 @@ async function fetchJSON(url) {
 let rangeIndex = [];
 let current = null; // 読み込み済みの範囲データ
 
-function prog(rangeId) { return store.progress[rangeId] || {}; }
+function prog(rangeId) { return store.progress[rangeId] ??= {}; }
 function masteredCount(rangeId) {
   return Object.values(prog(rangeId)).filter(p => p.m).length;
 }
@@ -186,6 +186,30 @@ function giveDrop(entry) {
   toast(`+1 ${esc(entry.cat.material.icon)} ${esc(entry.cat.material.name)}`);
 }
 
+function ansKind(a) {
+  const t = String(a).replace(/（[^）]*）/g, "").trim();
+  if (/^[0-9０-９\s.,%％+\-−×÷/=<>≦≧＜＞]+$/.test(t) && /[0-9０-９]/.test(t)) return "num";
+  if (/[A-Za-z]/.test(t) && !/[ぁ-んァ-ヶ一-龥]/.test(t)) return "en";
+  return "jp";
+}
+function buildChoices(entry) {
+  const card = entry.card, correct = card.a;
+  let ds = Array.isArray(card.distractors) ? card.distractors.filter(x => x !== correct) : [];
+  if (ds.length < 3) {
+    const cat = catOf(current, entry.cat.id);
+    const pool = [...new Set((cat ? cat.cards : allEntries(current).map(e => e.card)).map(c => c.a))]
+      .filter(a => a !== correct && !ds.includes(a));
+    const kind = ansKind(correct), len = correct.length;
+    const tiers = [
+      pool.filter(a => ansKind(a) === kind && a.length >= len * 0.35 && a.length <= len * 2.8),
+      pool.filter(a => ansKind(a) === kind),
+      pool
+    ];
+    for (const t of tiers) { ds = ds.concat(shuffle(t)).slice(0, 3); if (ds.length >= 3) break; }
+  }
+  return shuffle([correct, ...ds.slice(0, 3)]);
+}
+
 function renderPlay() {
   const s = session;
   if (!s.queue.length) { renderResult(); return; }
@@ -215,10 +239,7 @@ function renderPlay() {
       ui.querySelector("#j-ng").addEventListener("click", () => judge(entry, false));
     }, { once: true });
   } else {
-    const poolAnswers = [...new Set(
-      (catOf(current, entry.cat.id) ? catOf(current, entry.cat.id).cards : allEntries(current).map(e => e.card))
-        .map(c => c.a))].filter(a => a !== entry.card.a);
-    const choices = shuffle([entry.card.a, ...shuffle(poolAnswers).slice(0, 3)]);
+    const choices = buildChoices(entry);
     if (choices.length < 2) { s.mode = "flip"; renderPlay(); return; }
     ui.innerHTML = `<div class="choices">${choices.map(c =>
       `<button class="btn ghost" data-choice="${esc(c)}">${esc(c)}</button>`).join("")}</div>`;
